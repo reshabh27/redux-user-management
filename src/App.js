@@ -1,6 +1,7 @@
 
 import './App.css';
 import "bootstrap/dist/css/bootstrap.min.css";
+import "cropperjs/dist/cropper.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { Login } from './pages/Login';
 import  SignUp  from './pages/SignUp';
@@ -14,6 +15,7 @@ import ErrorElement from "./components/ErrorElement";
 import AddUser  from './pages/AddUser';
 import { UpdateUser } from './pages/UpdateUser';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Demo from './pages/Demo';
 
 
 
@@ -39,6 +41,10 @@ const router = createBrowserRouter([
         path: "/updateuser/:id",
         element: <UpdateUser />,
         loader: updateUserLoader,
+      },
+      {
+        path: '/demo',
+        element: <Demo />
       }
     ],
   },
