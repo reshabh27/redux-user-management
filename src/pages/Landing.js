@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { customFetch } from "../utils";
-// import { useGlobalContext } from "../context";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 
@@ -19,7 +18,6 @@ import { useSelector } from "react-redux";
 
 const Landing = () => {
   const [profiles, setProfiles] = useState([]);
-  // const { state } = useGlobalContext();
   const loggedUser = useSelector((state) => state.userState?.loggedUser);
   
   useEffect(() => {

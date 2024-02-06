@@ -7,7 +7,7 @@ export const HomeLayout = () => {
   // const {state} = useGlobalContext();
   return (
     <div>
-      {/* <NavbarComponent /> */}
+      <NavbarComponent />
       {/* {
         state.loggedUser ? 
         <Outlet />

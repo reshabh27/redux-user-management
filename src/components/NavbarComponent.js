@@ -8,19 +8,20 @@ import {
   Nav,
   Navbar,
 } from "react-bootstrap";
-import { useGlobalContext } from "../context";
+import { useDispatch, useSelector } from "react-redux";
+import { logoutUser } from "../features/user/userSlice";
 
 
 const NavbarComponent = () => {
-  const { state, dispatch } = useGlobalContext(); // Use the context
-
-  const user = state.loggedUser;
+  const user = useSelector((state) => state.userState?.loggedUser);
+  const canDelete = useSelector((state) => state.userState.canDelete);
+  const dispatch = useDispatch();
     // console.log(user);
   const navigate = useNavigate();
 
   const handleLogOut = () => {
     // Dispatch logout action to update the state
-    dispatch({ type: "LOGOUT_USER" });
+    dispatch(logoutUser());
     navigate("/");
   };
 
@@ -40,7 +41,7 @@ const NavbarComponent = () => {
             <Nav.Link as={Link} to="/">
               Home
             </Nav.Link>
-            { state.canDelete ?
+            { canDelete ?
             <Nav.Link as={Link} to="/adduser">
               Add User
             </Nav.Link> : ""
