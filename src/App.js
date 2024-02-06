@@ -13,7 +13,11 @@ import { loader as updateUserLoader } from "./pages/UpdateUser";
 import ErrorElement from "./components/ErrorElement";
 import AddUser  from './pages/AddUser';
 import { UpdateUser } from './pages/UpdateUser';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 
+
+
+const queryClient = new QueryClient();
 
 
 
@@ -52,9 +56,11 @@ const router = createBrowserRouter([
 
 function App() {
   return (
-    <div className="App">
-      <RouterProvider router={router} />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="App">
+        <RouterProvider router={router} />
+      </div>
+    </QueryClientProvider>
   );
 }
 

@@ -1,8 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { customFetch } from "../utils";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
+import {useQuery, useQueryClient } from "@tanstack/react-query";
 
 
 // export const loader = (store) => () => {
@@ -14,36 +15,67 @@ import { useSelector } from "react-redux";
 //   return null;
 // };
 
+const fetchProfiles = async () => {
+  const response = await customFetch("/profiles");
+  return response.data;
+};
+
 
 
 const Landing = () => {
-  const [profiles, setProfiles] = useState([]);
+  // const [profiles, setProfiles] = useState([]);
   const loggedUser = useSelector((state) => state.userState?.loggedUser);
-  
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await customFetch("http://localhost:3000/profiles");
-        setProfiles(response.data);
-      } catch (error) {
-        console.error("Error fetching profiles:", error);
-      }
-    };
-    
-    fetchData();
-  }, []);
-  
+  const queryClient = useQueryClient();
+  const { data: profiles, isLoading, isError} = useQuery({
+    queryKey: ["profiles"],
+    queryFn: () => {
+      return fetchProfiles();
+    },
+  });
+
+
   const handleDelete = async (profileId) => {
     try {
-      // Implement the delete logic based on the profileId
       await customFetch.delete(`http://localhost:3000/profiles/${profileId}`);
-      setProfiles((prevProfiles) =>
-      prevProfiles.filter((profile) => profile.id !== profileId)
-      );
+      // profiles =  profiles.filter((profile) => profile.id !== profileId)
+      queryClient.invalidateQueries("profiles");
     } catch (error) {
       console.error(`Error deleting profile with id ${profileId}:`, error);
     }
   };
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (isError) {
+    return <div>Error fetching profiles</div>;
+  }
+  
+  // useEffect(() => {
+  //   const fetchData = async () => {
+  //     try {
+  //       const response = await customFetch("http://localhost:3000/profiles");
+  //       setProfiles(response.data);
+  //     } catch (error) {
+  //       console.error("Error fetching profiles:", error);
+  //     }
+  //   };
+    
+  //   fetchData();
+  // }, []);
+  
+  // const handleDelete = async (profileId) => {
+  //   try {
+  //     // Implement the delete logic based on the profileId
+  //     await customFetch.delete(`http://localhost:3000/profiles/${profileId}`);
+  //     setProfiles((prevProfiles) =>
+  //     prevProfiles.filter((profile) => profile.id !== profileId)
+  //     );
+  //   } catch (error) {
+  //     console.error(`Error deleting profile with id ${profileId}:`, error);
+  //   }
+  // };
 
   return (
     <Container className="mt-4">
