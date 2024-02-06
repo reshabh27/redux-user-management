@@ -1,28 +1,60 @@
+// import React from "react";
+
+// export const AddUserFormInput = ({
+//   inpType,
+//   inpId,
+//   pHolder,
+//   text,
+//   fieldValue,
+//   handleChange,
+// }) => {
+//   return (
+//     <div className="mb-3">
+//       <label htmlFor={inpId} className="form-label h4">
+//         {text}:{" "}
+//       </label>
+//       <input
+//         type={inpType}
+//         className="form-control w-50 m-auto"
+//         id={inpId}
+//         name={inpId}
+//         value={fieldValue}
+//         placeholder={pHolder}
+//         onChange={handleChange}
+//         required
+//       />
+//     </div>
+//   );
+// };
+
+
+
 import React from "react";
 
 export const AddUserFormInput = ({
-  inpType,
+  inptype,
   inpId,
   pHolder,
   text,
   fieldValue,
   handleChange,
+  errorMessage, // Add this prop for displaying validation errors
 }) => {
   return (
     <div className="mb-3">
-      <label htmlFor={inpId} className="form-label h4">
-        {text}:{" "}
+      <label htmlFor={inpId} className="form-label">
+        {text}
       </label>
       <input
-        type={inpType}
-        className="form-control w-50 m-auto"
+        type={inptype}
+        className={`form-control w-50 m-auto ${errorMessage ? "is-invalid" : ""}`} // Add is-invalid class if there's an error
         id={inpId}
         name={inpId}
-        value={fieldValue}
         placeholder={pHolder}
+        value={fieldValue}
         onChange={handleChange}
-        required
       />
+      {errorMessage && <div className="invalid-feedback">{errorMessage}</div>}
     </div>
   );
 };

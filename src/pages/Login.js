@@ -16,6 +16,43 @@ export const Login = () => {
       password: "",
     });
 
+    const [validationErrors, setValidationErrors] = useState({
+      email: "",
+      password: "",
+    });
+
+    const validateForm = () => {
+      let isValid = true;
+      const errors = {};
+
+      // Validate Email
+      if (!formData.email.trim()) {
+        errors.email = "Email is required";
+        isValid = false;
+      } else if (!isValidEmail(formData.email)) {
+        errors.email = "Invalid email address";
+        isValid = false;
+      }
+
+      // Validate Password
+      if (!formData.password.trim()) {
+        errors.password = "Password is required";
+        isValid = false;
+      } else if (formData.password.length < 4) {
+        errors.password = "Password must be at least 4 characters";
+        isValid = false;
+      }
+
+      setValidationErrors(errors);
+      return isValid;
+    };
+
+    const isValidEmail = (email) => {
+      // Add your email validation logic here
+      return /\S+@\S+\.\S+/.test(email);
+    };
+
+
     const handleInputChange = (e) => {
       setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -23,11 +60,16 @@ export const Login = () => {
     const handleLogin = async (e) => {
       e.preventDefault();
 
-      try {
-        const usersData = await customFetch(`/profiles?email=${formData.email}`);
-        // console.log(usersData.data);
-        if(usersData.data.length)
-        {
+      const isValid = validateForm();
+
+      if (isValid)
+      {
+        try {
+          const usersData = await customFetch(
+            `/profiles?email=${formData.email}`
+          );
+          // console.log(usersData.data);
+          if (usersData.data.length) {
             const user = usersData.data[0];
             // Check if the entered password matches the user's password
             if (formData.password === user.password) {
@@ -38,16 +80,19 @@ export const Login = () => {
               // Passwords don't match, show an alert
               alert("Wrong password");
             }
-        }
-        else
-        {
+          } else {
             const errorMessage = "This email is not registered";
             alert(errorMessage);
             return null;
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          alert("An error occurred during login.");
         }
-      } catch (error) {
-        console.error("Login error:", error);
-        alert("An error occurred during login.");
+      }
+      else
+      {
+        alert("Form validation failed. Please check the errors.");
       }
     };
 
@@ -71,8 +116,8 @@ export const Login = () => {
           <br />
           <br />
           <br />
-          <FormInput type="email" label="Email" name="email" handleInputChange={handleInputChange}/>
-          <FormInput type="password" label="Password" name="password" handleInputChange={handleInputChange}/>
+          <FormInput type="email" label="Email" name="email" handleInputChange={handleInputChange} errorMessage={validationErrors.email}/>
+          <FormInput type="password" label="Password" name="password" handleInputChange={handleInputChange} errorMessage={validationErrors.password}/>
           <br />
           <div>
             <SubmitBtn text="Login" />

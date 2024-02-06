@@ -22,6 +22,73 @@ const AddUser = () => {
     interest: [],
   });
 
+
+  const [validationErrors, setValidationErrors] = useState({
+    fullname: "",
+    email: "",
+    password: "",
+    empId: "",
+    department: "",
+    userPic: "",
+    bio: "",
+  });
+
+
+
+
+  const validateForm = () => {
+    let isValid = true;
+    const errors = {};
+
+    // Validate Fullname
+    if (!formData.fullname.trim()) {
+      errors.fullname = "Fullname is required";
+      isValid = false;
+    }
+
+    // Validate Email
+    if (!formData.email.trim()) {
+      errors.email = "Email is required";
+      isValid = false;
+    } else if (!isValidEmail(formData.email)) {
+      errors.email = "Invalid email address";
+      isValid = false;
+    }
+
+    // Validate Password
+    if (!formData.password.trim()) {
+      errors.password = "Password is required";
+      isValid = false;
+    } else if (formData.password.length < 4) {
+      errors.password = "Password must be at least 6 characters";
+      isValid = false;
+    }
+
+    // Validate Employee ID (if role is admin)
+    if (formData.role === "admin" && !formData.empId.trim()) {
+      errors.empId = "Employee ID is required for admin";
+      isValid = false;
+    }
+
+    // Validate Department (if role is editor)
+    if (formData.role === "editor" && !formData.department.trim()) {
+      errors.department = "Department is required for editor";
+      isValid = false;
+    }
+
+    // Add additional validations for other fields
+
+    setValidationErrors(errors);
+    return isValid;
+  };
+
+
+   const isValidEmail = (email) => {
+     // Add your email validation logic here
+     return /\S+@\S+\.\S+/.test(email);
+   };
+
+
   const tagVal = useSelector((state) => state.userState.tagVal);
   const dispatch = useDispatch();
 
@@ -44,28 +111,39 @@ const AddUser = () => {
   };
 
   const handleSubmit = async (e) => {
-    try {
-      e.preventDefault();
-      // console.log(tagVal);
-       setFormData((prevData) => ({
-         ...prevData,
-         interest: tagVal,
-       }));
-       const updatedFormData = await new Promise((resolve) => {
-         setFormData((prevData) => {
-           resolve(prevData);
-           return prevData; // This return is required for the promise resolution
-         });
-       });
-      // console.log(updatedFormData);
-      const response = await customFetch.post("/profiles", { ...updatedFormData });
-      // Handle the response as needed
-      
-      dispatch(removeTagVal());
+    e.preventDefault();
 
-      alert("Submit successful:", response);
-    } catch (error) {
-      alert("Error submitting the form:");
+     const isValid = validateForm();
+    if (isValid)
+    {
+      try {
+        // console.log(tagVal);
+        setFormData((prevData) => ({
+          ...prevData,
+          interest: tagVal,
+        }));
+        const updatedFormData = await new Promise((resolve) => {
+          setFormData((prevData) => {
+            resolve(prevData);
+            return prevData; // This return is required for the promise resolution
+          });
+        });
+        // console.log(updatedFormData);
+        const response = await customFetch.post("/profiles", {
+          ...updatedFormData,
+        });
+        // Handle the response as needed
+
+        dispatch(removeTagVal());
+
+        alert("Submit successful:", response);
+      } catch (error) {
+        alert("Error submitting the form:");
+      }
+    }
+    else
+    {
+      alert("Form validation failed. Please check the errors.");
     }
   };
 
@@ -79,6 +157,7 @@ const AddUser = () => {
           text="Full Name"
           fieldValue={formData.fullname}
           handleChange={handleInputChange}
+          errorMessage={validationErrors.fullname}
         />
 
         <AddUserFormInput
@@ -88,6 +167,7 @@ const AddUser = () => {
           text="Email"
           fieldValue={formData.email}
           handleChange={handleInputChange}
+          errorMessage={validationErrors.email}
         />
 
         <AddUserFormInput
@@ -97,6 +177,7 @@ const AddUser = () => {
           text="Password"
           fieldValue={formData.password}
           handleChange={handleInputChange}
+          errorMessage={validationErrors.password}
         />
 
         <div className="mb-3">
@@ -125,6 +206,7 @@ const AddUser = () => {
             text="Employee ID"
             fieldValue={formData.empId}
             handleChange={handleInputChange}
+            errorMessage={validationErrors.empId}
           />
         )}
         {formData.role === "editor" && (
@@ -135,6 +217,7 @@ const AddUser = () => {
             text="Department"
             fieldValue={formData.department}
             handleChange={handleInputChange}
+            errorMessage={validationErrors.department}
           />
         )}
 
@@ -145,6 +228,7 @@ const AddUser = () => {
           text="Profile Image"
           fieldValue={formData.userPic}
           handleChange={handleInputChange}
+          errorMessage={validationErrors.userPic}
         />
 
         <div className="mb-3">
@@ -161,7 +245,7 @@ const AddUser = () => {
           ></textarea>
         </div>
 
-          <TagInputWithAutocomplete />
+        <TagInputWithAutocomplete />
 
         <button type="submit" className="btn btn-primary">
           Submit
