@@ -3,12 +3,15 @@ import { Form, Link, useNavigate } from 'react-router-dom';
 import FormInput from '../components/FormInput';
 import SubmitBtn from '../components/SubmitBtn';
 import { customFetch } from '../utils';
-import { useGlobalContext } from '../context';
+// import { useGlobalContext } from '../context';
+import { useDispatch } from 'react-redux';
+import { loginUser } from '../features/user/userSlice';
 
 
 
 export const Login = () => {
-    const {dispatch} = useGlobalContext();
+    // const {dispatch} = useGlobalContext();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({
       email: "",
@@ -31,7 +34,7 @@ export const Login = () => {
             // Check if the entered password matches the user's password
             if (formData.password === user.password) {
               // Passwords match, dispatch the LOGIN_USER action
-              dispatch({ type: "LOGIN_USER", payload: user });
+              dispatch(loginUser(user));
               navigate("/");
             } else {
               // Passwords don't match, show an alert
