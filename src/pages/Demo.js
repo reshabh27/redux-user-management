@@ -2,11 +2,10 @@ import React, { useState, useRef } from "react";
 import Cropper from "react-cropper";
 import "cropperjs/dist/cropper.css";
 import "./Demo.css";
-import axios from "axios";
 import { customFetchForFirebase } from "../utils";
 
 const defaultSrc =
-  "https://raw.githubusercontent.com/roadmanfong/react-cropper/master/example/img/child.jpg";
+  "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png";
 
 const Demo = () => {
   const [image, setImage] = useState(defaultSrc);
@@ -56,6 +55,7 @@ const Demo = () => {
 
     try {
       // Send a POST request to your Firebase database
+      console.log(process.env.REACT_APP_API_URL);
       const response = await customFetchForFirebase.post("/profiles.json", {...data});
       console.log(response);
 
@@ -80,7 +80,7 @@ const Demo = () => {
           <br />
           <Cropper
             ref={cropperRef}
-            style={{ width: "100%" }}
+            style={{ width: "50%",height:"50%" }}
             zoomTo={0.5}
             initialAspectRatio={1}
             src={image}
@@ -104,7 +104,7 @@ const Demo = () => {
             <h1>Cropped image</h1>
             <img
               className="img-fluid"
-              style={{ width: "100%", height: "100%" }}
+              style={{ width: "50%", height: "50%" }}
               src={cropData}
               alt="cropped"
             />
