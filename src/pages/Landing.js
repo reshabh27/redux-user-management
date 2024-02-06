@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import { customFetch } from "../utils";
-import { useGlobalContext } from "../context";
+// import { useGlobalContext } from "../context";
 import { Link } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 
 // export const loader = (store) => () => {
@@ -18,7 +19,8 @@ import { Link } from "react-router-dom";
 
 const Landing = () => {
   const [profiles, setProfiles] = useState([]);
-  const { state } = useGlobalContext();
+  // const { state } = useGlobalContext();
+  const loggedUser = useSelector((state) => state.userState?.loggedUser);
   
   useEffect(() => {
     const fetchData = async () => {
@@ -69,7 +71,7 @@ const Landing = () => {
                 )}
 
                 {/* Render update and delete buttons based on the user's role */}
-                {state.loggedUser?.role === "admin" && (
+                {loggedUser?.role === "admin" && (
                   <>
                     <Button
                       variant="danger"
@@ -83,7 +85,7 @@ const Landing = () => {
                     </Link>
                   </>
                 )}
-                {state.loggedUser?.role === "editor" && (
+                {loggedUser?.role === "editor" && (
                   <Link to={`/updateuser/${profile.id}`}>
                     <Button variant="primary">Update</Button>
                   </Link>
