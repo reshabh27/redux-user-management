@@ -3,14 +3,12 @@ import { Form, Link, useNavigate } from 'react-router-dom';
 import FormInput from '../components/FormInput';
 import SubmitBtn from '../components/SubmitBtn';
 import { customFetch } from '../utils';
-// import { useGlobalContext } from '../context';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../features/user/userSlice';
 
 
 
 export const Login = () => {
-    // const {dispatch} = useGlobalContext();
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [formData, setFormData] = useState({

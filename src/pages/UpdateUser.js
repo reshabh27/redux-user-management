@@ -2,6 +2,9 @@ import React, { useState } from 'react'
 import { AddUserFormInput } from '../components/AddUserFormInput';
 import { customFetch } from '../utils';
 import { useLoaderData, useNavigate } from 'react-router-dom';
+import TagInputWithAutocomplete from '../components/TagInputWithAutocomplete';
+import { useDispatch, useSelector } from 'react-redux';
+import { removeTagVal } from '../features/user/userSlice';
 
 export const loader = async ({params}) => {
   const response = await customFetch.get(`/profiles/${params.id}`);
@@ -15,6 +18,8 @@ export const UpdateUser = () => {
     const navigate = useNavigate();
     // console.log(fetchedData);
  const [formData, setFormData] = useState(fetchedData.userToUpdate);
+  const tagVal = useSelector((state) => state.userState.tagVal);
+  const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -32,18 +37,24 @@ export const UpdateUser = () => {
     }));
   };
 
-  const handleInterestChange = (e) => {
-    const interests = e.target.value.split(',').map((interest) => interest.trim());
-    setFormData({...formData,interest:interests})
-  };
-
   const handleUpdate = async (e) => {
     try {
       e.preventDefault();
-      // Assuming customFetch.post returns a response
-       await customFetch.patch(`/profiles/${formData.id}`, { ...formData });
+
+      setFormData((prevData) => ({
+        ...prevData,
+        interest: tagVal,
+      }));
+      const updatedFormData = await new Promise((resolve) => {
+        setFormData((prevData) => {
+          resolve(prevData);
+          return prevData; 
+        });
+      });
+      // console.log(updatedFormData);
+       await customFetch.patch(`/profiles/${formData.id}`, { ...updatedFormData });
+       dispatch(removeTagVal());
     //   console.log(response);
-      // Handle the response as needed
       alert("Submit successful:");
         navigate("/");
     } catch (error) {
@@ -54,14 +65,14 @@ export const UpdateUser = () => {
   return (
     <div className="container mt-4">
       <form onSubmit={handleUpdate}>
-        <AddUserFormInput inptype="text" inpId="fullname" pHolder="Enter Full Name" text="Full Name" 
-        fieldValue={formData.fullname} handleChange={handleInputChange} />
-        
-        <AddUserFormInput inptype="email" inpId="email" pHolder="Enter Email" text="Email" 
-        fieldValue={formData.email} handleChange={handleInputChange} />
-
-        <AddUserFormInput inptype="password" inpId="password" pHolder="Enter Password" text="Password" 
-        fieldValue={formData.password} handleChange={handleInputChange} />
+        <AddUserFormInput
+          inptype="text"
+          inpId="fullname"
+          pHolder="Enter Full Name"
+          text="Full Name"
+          fieldValue={formData.fullname}
+          handleChange={handleInputChange}
+        />
 
         <div className="mb-3">
           <label htmlFor="role" className="form-label">
@@ -82,18 +93,35 @@ export const UpdateUser = () => {
         </div>
 
         {formData.role === "admin" && (
-            <AddUserFormInput inptype="text" inpId="empId" pHolder="Enter Employee ID" text="Employee ID" 
-            fieldValue={formData.empId} handleChange={handleInputChange} />
+          <AddUserFormInput
+            inptype="text"
+            inpId="empId"
+            pHolder="Enter Employee ID"
+            text="Employee ID"
+            fieldValue={formData.empId}
+            handleChange={handleInputChange}
+          />
         )}
         {formData.role === "editor" && (
-            <AddUserFormInput inptype="text" inpId="department" pHolder="Enter Department" text="Department" 
-            fieldValue={formData.department} handleChange={handleInputChange} />
+          <AddUserFormInput
+            inptype="text"
+            inpId="department"
+            pHolder="Enter Department"
+            text="Department"
+            fieldValue={formData.department}
+            handleChange={handleInputChange}
+          />
         )}
 
+        <AddUserFormInput
+          inptype="text"
+          inpId="userPic"
+          pHolder="Enter Profile Pic link"
+          text="Profile Image"
+          fieldValue={formData.userPic}
+          handleChange={handleInputChange}
+        />
 
-        <AddUserFormInput inptype="text" inpId="userPic" pHolder="Enter Profile Pic link" text="Profile Image" 
-            fieldValue={formData.userPic} handleChange={handleInputChange} />
-        
         <div className="mb-3">
           <label htmlFor="bio" className="form-label">
             Bio
@@ -108,19 +136,7 @@ export const UpdateUser = () => {
           ></textarea>
         </div>
 
-            <div className="mb-3">
-          <label htmlFor="interest" className="form-label">
-            Interests (comma-separated)
-          </label>
-          <input
-            type="text"
-            className="form-control w-50 m-auto"
-            id="interest"
-            name="interest"
-            value={formData.interest?.join(', ')}
-            onChange={handleInterestChange}
-          />
-        </div>
+        <TagInputWithAutocomplete />
 
         <button type="submit" className="btn btn-primary">
           Update User

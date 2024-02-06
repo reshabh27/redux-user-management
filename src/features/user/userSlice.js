@@ -1,4 +1,4 @@
-import { createSlice, current } from "@reduxjs/toolkit";
+import { createSlice} from "@reduxjs/toolkit";
 
 // const getUserFromLocalStorage = () => {
 //   return JSON.parse(localStorage.getItem("userIMDB")) || null;
@@ -37,9 +37,12 @@ const userSlice = createSlice({
     setTagVal:(state,action) => {
         state.tagVal = action.payload;
     },
+    removeTagVal:(state) => {
+      state.tagVal = [];
+    }
   },
 });
 
-export const { loginUser, logoutUser, setTagVal } = userSlice.actions;
+export const { loginUser, logoutUser, setTagVal, removeTagVal } = userSlice.actions;
 
 export default userSlice.reducer;

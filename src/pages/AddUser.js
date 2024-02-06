@@ -2,7 +2,9 @@ import React, {  useState } from "react";
 import { AddUserFormInput } from "../components/AddUserFormInput";
 import { customFetch } from "../utils";
 import TagInputWithAutocomplete from "../components/TagInputWithAutocomplete";
-import { useGlobalContext } from "../context";
+
+import { useDispatch, useSelector } from "react-redux";
+import { removeTagVal } from "../features/user/userSlice";
 
 
 
@@ -20,7 +22,8 @@ const AddUser = () => {
     interest: [],
   });
 
-  const { tagVal } = useGlobalContext();
+  const tagVal = useSelector((state) => state.userState.tagVal);
+  const dispatch = useDispatch();
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -48,9 +51,18 @@ const AddUser = () => {
          ...prevData,
          interest: tagVal,
        }));
-      // console.log(formData);
-      const response = await customFetch.post("/profiles", { ...formData });
+       const updatedFormData = await new Promise((resolve) => {
+         setFormData((prevData) => {
+           resolve(prevData);
+           return prevData; // This return is required for the promise resolution
+         });
+       });
+      // console.log(updatedFormData);
+      const response = await customFetch.post("/profiles", { ...updatedFormData });
       // Handle the response as needed
+      
+      dispatch(removeTagVal());
+
       alert("Submit successful:", response);
     } catch (error) {
       alert("Error submitting the form:");

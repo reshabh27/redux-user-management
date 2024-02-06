@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import TagsInput from "react-tagsinput";
 import "react-tagsinput/react-tagsinput.css"; // Import the styles
-import { useGlobalContext } from "../context";
+import { useDispatch } from "react-redux";
+import { setTagVal } from "../features/user/userSlice";
 
 const TagInputWithAutocomplete = () => {
-  const { setTagVal } = useGlobalContext();
+  const dispatch = useDispatch();
   const [tags, setTags] = useState([]);
   const [suggestions, setSuggestions] = useState([
     "JavaScript",
@@ -26,7 +27,7 @@ const TagInputWithAutocomplete = () => {
     callback(null, filteredSuggestions);
   };
 
-  setTagVal(tags);
+  dispatch(setTagVal(tags));
 
   return (
     <div className="mb-3">
