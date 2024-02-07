@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Form, Link, useNavigate } from 'react-router-dom';
 import FormInput from '../components/FormInput';
 import SubmitBtn from '../components/SubmitBtn';
-import { customFetch } from '../utils';
+import { customFetchForFirebase } from '../utils';
 import { useDispatch } from 'react-redux';
 import { loginUser } from '../features/user/userSlice';
 
@@ -24,7 +24,7 @@ export const Login = () => {
     const validateForm = () => {
       let isValid = true;
       const errors = {};
-
+      // console.log(formData);
       // Validate Email
       if (!formData.email.trim()) {
         errors.email = "Email is required";
@@ -65,26 +65,39 @@ export const Login = () => {
       if (isValid)
       {
         try {
-          const usersData = await customFetch(
-            `/profiles?email=${formData.email}`
-          );
+          const usersData = await customFetchForFirebase( `/profiles.json` );
           // console.log(usersData.data);
-          if (usersData.data.length) {
-            const user = usersData.data[0];
-            // Check if the entered password matches the user's password
-            if (formData.password === user.password) {
-              // Passwords match, dispatch the LOGIN_USER action
-              dispatch(loginUser(user));
-              navigate("/");
-            } else {
-              // Passwords don't match, show an alert
-              alert("Wrong password");
-            }
+          const transformedArray = Object.entries(usersData.data).map(
+            ([key, value]) => ({
+              ...value,
+              id: key,
+            })
+          );
+          console.log(transformedArray);
+          const matchedUser = transformedArray.find((user) => user.email === formData.email && user.password === formData.password);
+          if (matchedUser) {
+            dispatch(loginUser(matchedUser));
+            navigate("/");
+            console.log("Login successful!");
           } else {
-            const errorMessage = "This email is not registered";
-            alert(errorMessage);
-            return null;
+            alert("Wrong email or password");
           }
+          // if (transformedArray.length) {
+          //   const user = usersData.data[0];
+          //   // Check if the entered password matches the user's password
+          //   if (formData.password === user.password) {
+          //     // Passwords match, dispatch the LOGIN_USER action
+          //     dispatch(loginUser(user));
+          //     navigate("/");
+          //   } else {
+          //     // Passwords don't match, show an alert
+          //     alert("Wrong password");
+          //   }
+          // } else {
+          //   const errorMessage = "This email is not registered";
+          //   alert(errorMessage);
+          //   return null;
+          // }
         } catch (error) {
           console.error("Login error:", error);
           alert("An error occurred during login.");
@@ -116,8 +129,8 @@ export const Login = () => {
           <br />
           <br />
           <br />
-          <FormInput type="email" label="Email" name="email" handleInputChange={handleInputChange} errorMessage={validationErrors.email}/>
-          <FormInput type="password" label="Password" name="password" handleInputChange={handleInputChange} errorMessage={validationErrors.password}/>
+          <FormInput type="email" label="Email" name="email" onChange={handleInputChange} errorMessage={validationErrors.email}/>
+          <FormInput type="password" label="Password" name="password" onChange={handleInputChange} errorMessage={validationErrors.password}/>
           <br />
           <div>
             <SubmitBtn text="Login" />
