@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
-import { customFetch } from "../utils";
+import { customFetch, customFetchForFirebase } from "../utils";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {useQuery, useQueryClient } from "@tanstack/react-query";
@@ -16,8 +16,15 @@ import {useQuery, useQueryClient } from "@tanstack/react-query";
 // };
 
 const fetchProfiles = async () => {
-  const response = await customFetch("/profiles");
-  return response.data;
+  const response = await customFetchForFirebase("/profiles.json");
+  const transformedArray = Object.entries(response.data).map(
+    ([key, value]) => ({
+      ...value,
+      id: key,
+    })
+  );
+  // console.log(transformedArray);
+  return transformedArray;
 };
 
 
@@ -36,7 +43,7 @@ const Landing = () => {
 
   const handleDelete = async (profileId) => {
     try {
-      await customFetch.delete(`http://localhost:3000/profiles/${profileId}`);
+      await customFetchForFirebase.delete(`/profiles/${profileId}`);
       // profiles =  profiles.filter((profile) => profile.id !== profileId)
       queryClient.invalidateQueries("profiles");
     } catch (error) {
@@ -80,10 +87,10 @@ const Landing = () => {
   return (
     <Container className="mt-4">
       <Row xs={1} md={2} lg={3} className="g-4">
-        {profiles.map((profile) => (
+        {profiles?.map((profile) => (
           <Col key={profile.id}>
             <Card>
-              <Card.Img variant="top" src={profile.userPic} />
+              <Card.Img variant="top" src={profile.croppedImage} />
               <Card.Body>
                 <Card.Title>{profile.fullname}</Card.Title>
                 <Card.Text>Email: {profile.email}</Card.Text>
