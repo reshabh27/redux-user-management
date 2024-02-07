@@ -43,7 +43,7 @@ const Landing = () => {
 
   const handleDelete = async (profileId) => {
     try {
-      await customFetchForFirebase.delete(`/profiles/${profileId}`);
+      await customFetchForFirebase.delete(`/profiles/${profileId}.json`);
       // profiles =  profiles.filter((profile) => profile.id !== profileId)
       queryClient.invalidateQueries("profiles");
     } catch (error) {
@@ -96,7 +96,7 @@ const Landing = () => {
                 <Card.Text>Email: {profile.email}</Card.Text>
                 <Card.Text>Role: {profile.role}</Card.Text>
                 <Card.Text>Bio: {profile.bio}</Card.Text>
-                {profile.interest.length > 0 && (
+                {profile?.interest?.length > 0 && (
                   <>
                     <Card.Text>Interests:</Card.Text>
                     <ul>

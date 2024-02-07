@@ -35,6 +35,7 @@ const userSlice = createSlice({
     //   localStorage.removeItem("allMovies");
     },
     setTagVal:(state,action) => {
+      // console.log("i called for " , action.payload);
         state.tagVal = action.payload;
     },
     removeTagVal:(state) => {

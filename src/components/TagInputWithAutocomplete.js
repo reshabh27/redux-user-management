@@ -4,9 +4,9 @@ import "react-tagsinput/react-tagsinput.css"; // Import the styles
 import { useDispatch } from "react-redux";
 import { setTagVal } from "../features/user/userSlice";
 
-const TagInputWithAutocomplete = () => {
+const TagInputWithAutocomplete = ({ initialTags = []}) => {
   const dispatch = useDispatch();
-  const [tags, setTags] = useState([]);
+  const [tags, setTags] = useState(initialTags);
   const [suggestions, setSuggestions] = useState([
     "JavaScript",
     "React",
@@ -31,7 +31,9 @@ const TagInputWithAutocomplete = () => {
 
   return (
     <div className="mb-3">
-      <label htmlFor="Interests" className="form-label">Interests:</label>
+      <label htmlFor="Interests" className="form-label">
+        Interests:
+      </label>
       <TagsInput
         id="tags"
         className="form-control w-50 m-auto"
@@ -39,7 +41,9 @@ const TagInputWithAutocomplete = () => {
         onChange={handleTagChange}
         inputValue=""
         addKeys={[9, 13, 32]} // Tab, Enter, Space keys to add a tag
-        renderInput={(props) => <input {...props} id="Interests" placeholder="Add tags" />}
+        renderInput={(props) => (
+          <input {...props} id="Interests" placeholder="Add tags" />
+        )}
         renderLayout={(tagComponents, inputComponent) => (
           <div>
             {tagComponents}

@@ -1,25 +1,35 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { AddUserFormInput } from '../components/AddUserFormInput';
-import { customFetch } from '../utils';
+import { customFetch, customFetchForFirebase } from '../utils';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import TagInputWithAutocomplete from '../components/TagInputWithAutocomplete';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeTagVal } from '../features/user/userSlice';
+import { removeTagVal, setTagVal } from '../features/user/userSlice';
+import Demo from './Demo';
 
 export const loader = async ({params}) => {
-  const response = await customFetch.get(`/profiles/${params.id}`);
-  const userToUpdate = response.data;
-//   console.log(userToUpdate);
-  return { userToUpdate };
+  const response = await customFetchForFirebase.get(`/profiles/${params.id}.json`);
+  const userToUpdate = {
+    ...response.data,
+    id: params.id,
+  };
+  console.log(userToUpdate);
+  return  userToUpdate ;
 };
 
 export const UpdateUser = () => {
     const fetchedData = useLoaderData()
     const navigate = useNavigate();
     // console.log(fetchedData);
- const [formData, setFormData] = useState(fetchedData.userToUpdate);
-  const tagVal = useSelector((state) => state.userState.tagVal);
-  const dispatch = useDispatch();
+    const [formData, setFormData] = useState(fetchedData);
+    const [cropData, setCropData] = useState(fetchedData?.croppedImage);
+    const tagVal = useSelector((state) => state.userState.tagVal);
+    const dispatch = useDispatch();
+
+    // useEffect(() => {
+    //   // console.log(formData.interest);
+    //   dispatch(setTagVal(formData.interest));
+    // },[])
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,14 +55,18 @@ export const UpdateUser = () => {
         ...prevData,
         interest: tagVal,
       }));
+       setFormData((prevData) => ({
+         ...prevData,
+         croppedImage: cropData,
+       }));
       const updatedFormData = await new Promise((resolve) => {
         setFormData((prevData) => {
           resolve(prevData);
           return prevData; 
         });
       });
-      // console.log(updatedFormData);
-       await customFetch.patch(`/profiles/${formData.id}`, { ...updatedFormData });
+      console.log(updatedFormData);
+       await customFetchForFirebase.patch(`/profiles/${updatedFormData.id}.json`, { ...updatedFormData });
        dispatch(removeTagVal());
     //   console.log(response);
       alert("Submit successful:");
@@ -64,6 +78,9 @@ export const UpdateUser = () => {
 
   return (
     <div className="container mt-4">
+      <div className="place-items-center m-4 pb-4">
+        <Demo cropData={cropData} setCropData={setCropData} />
+      </div>
       <form onSubmit={handleUpdate}>
         <AddUserFormInput
           inptype="text"
@@ -113,15 +130,6 @@ export const UpdateUser = () => {
           />
         )}
 
-        <AddUserFormInput
-          inptype="text"
-          inpId="userPic"
-          pHolder="Enter Profile Pic link"
-          text="Profile Image"
-          fieldValue={formData.userPic}
-          handleChange={handleInputChange}
-        />
-
         <div className="mb-3">
           <label htmlFor="bio" className="form-label">
             Bio
@@ -136,7 +144,7 @@ export const UpdateUser = () => {
           ></textarea>
         </div>
 
-        <TagInputWithAutocomplete />
+        <TagInputWithAutocomplete initialTags={formData.interest} />
 
         <button type="submit" className="btn btn-primary">
           Update User

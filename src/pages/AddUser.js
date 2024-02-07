@@ -1,10 +1,11 @@
 import React, {  useState } from "react";
 import { AddUserFormInput } from "../components/AddUserFormInput";
-import { customFetch } from "../utils";
+import { customFetch, customFetchForFirebase } from "../utils";
 import TagInputWithAutocomplete from "../components/TagInputWithAutocomplete";
 
 import { useDispatch, useSelector } from "react-redux";
 import { removeTagVal } from "../features/user/userSlice";
+import Demo from "./Demo";
 
 
 
@@ -16,11 +17,11 @@ const AddUser = () => {
     role: "user",
     empId: "",
     department: "",
-    userPic:
-      "https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png",
+    croppedImage:"",
     bio: "NA",
     interest: [],
   });
+  const [cropData, setCropData] = useState("#");
 
 
   const [validationErrors, setValidationErrors] = useState({
@@ -29,7 +30,6 @@ const AddUser = () => {
     password: "",
     empId: "",
     department: "",
-    userPic: "",
     bio: "",
   });
 
@@ -122,6 +122,10 @@ const AddUser = () => {
           ...prevData,
           interest: tagVal,
         }));
+        setFormData((prevData) => ({
+          ...prevData,
+          croppedImage: cropData,
+        }));
         const updatedFormData = await new Promise((resolve) => {
           setFormData((prevData) => {
             resolve(prevData);
@@ -129,7 +133,7 @@ const AddUser = () => {
           });
         });
         // console.log(updatedFormData);
-        const response = await customFetch.post("/profiles", {
+        const response = await customFetchForFirebase.post("/profiles.json", {
           ...updatedFormData,
         });
         // Handle the response as needed
@@ -149,6 +153,9 @@ const AddUser = () => {
 
   return (
     <div className="container mt-4">
+      <div className="place-items-center m-4 pb-4">
+        <Demo cropData={cropData} setCropData={setCropData} />
+      </div>
       <form onSubmit={handleSubmit}>
         <AddUserFormInput
           inptype="text"
@@ -220,16 +227,6 @@ const AddUser = () => {
             errorMessage={validationErrors.department}
           />
         )}
-
-        <AddUserFormInput
-          inptype="text"
-          inpId="userPic"
-          pHolder="Enter Profile Pic link"
-          text="Profile Image"
-          fieldValue={formData.userPic}
-          handleChange={handleInputChange}
-          errorMessage={validationErrors.userPic}
-        />
 
         <div className="mb-3">
           <label htmlFor="bio" className="form-label">

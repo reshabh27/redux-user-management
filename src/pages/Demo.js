@@ -144,7 +144,7 @@ const Demo = ({cropData,setCropData}) => {
       {/* Display Cropped Image on the page */}
       <div className="row mt-4 mx-auto">
         <div className="col-md-6">
-          <h1>Cropped image</h1>
+          <h1>Selected image</h1>
           <img
             className="img-fluid"
             style={{ width: "50%", height: "50%" }}
