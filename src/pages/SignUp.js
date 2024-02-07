@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import FormInput from "../components/FormInput";
 import SubmitBtn from "../components/SubmitBtn";
-import { Form, Link, redirect, useNavigate } from "react-router-dom";
-import { customFetch, customFetchForFirebase } from "../utils";
+import { Form, Link,  useNavigate } from "react-router-dom";
+import {  customFetchForFirebase } from "../utils";
 import Demo from "./Demo";
 
 // export const action = async ({ request }) => {
@@ -123,7 +123,7 @@ const SignUp = () => {
       // console.log(formData);
       // return null;
       try {
-        const response = await customFetchForFirebase.post("/profiles.json", formData);
+        await customFetchForFirebase.post("/profiles.json", formData);
         // console.log(response);
         alert("suceessfully created account");
         // return null;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
-import { customFetch, customFetchForFirebase } from "../utils";
+import {  customFetchForFirebase } from "../utils";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import {useQuery, useQueryClient } from "@tanstack/react-query";

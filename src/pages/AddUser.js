@@ -1,6 +1,6 @@
 import React, {  useState } from "react";
 import { AddUserFormInput } from "../components/AddUserFormInput";
-import { customFetch, customFetchForFirebase } from "../utils";
+import { customFetchForFirebase } from "../utils";
 import TagInputWithAutocomplete from "../components/TagInputWithAutocomplete";
 
 import { useDispatch, useSelector } from "react-redux";

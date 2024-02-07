@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, {  useState } from 'react'
 import { AddUserFormInput } from '../components/AddUserFormInput';
-import { customFetch, customFetchForFirebase } from '../utils';
+import {  customFetchForFirebase } from '../utils';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 import TagInputWithAutocomplete from '../components/TagInputWithAutocomplete';
 import { useDispatch, useSelector } from 'react-redux';
-import { removeTagVal, setTagVal } from '../features/user/userSlice';
+import { removeTagVal} from '../features/user/userSlice';
 import Demo from './Demo';
 
 export const loader = async ({params}) => {
