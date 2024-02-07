@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { Card, Col, Container, Row, Button } from "react-bootstrap";
 import {  customFetchForFirebase } from "../utils";
 import { Link } from "react-router-dom";
@@ -31,6 +31,7 @@ const fetchProfiles = async () => {
 
 const Landing = () => {
   // const [profiles, setProfiles] = useState([]);
+  const [isDisabled,setIsDisabled] = useState(0);
   const loggedUser = useSelector((state) => state.userState?.loggedUser);
   const queryClient = useQueryClient();
   const { data: profiles, isLoading, isError} = useQuery({
@@ -42,6 +43,7 @@ const Landing = () => {
 
 
   const handleDelete = async (profileId) => {
+    setIsDisabled(1);
     try {
       await customFetchForFirebase.delete(`/profiles/${profileId}.json`);
       // profiles =  profiles.filter((profile) => profile.id !== profileId)
@@ -49,6 +51,7 @@ const Landing = () => {
     } catch (error) {
       console.error(`Error deleting profile with id ${profileId}:`, error);
     }
+    setIsDisabled(0);
   };
 
   if (isLoading) {
@@ -114,8 +117,16 @@ const Landing = () => {
                       variant="danger"
                       className="me-2"
                       onClick={() => handleDelete(profile.id)}
+                      disabled={isDisabled}
                     >
-                      Delete
+                      {isDisabled ? (
+                        <>
+                          <span className=""></span>
+                          Deleting...
+                        </>
+                      ) : (
+                        "Delete"
+                      )}
                     </Button>
                     <Link to={`/updateuser/${profile.id}`}>
                       <Button variant="primary">Update</Button>

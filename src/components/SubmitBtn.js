@@ -1,18 +1,18 @@
 import { Button } from "react-bootstrap";
-import { useNavigation } from "react-router-dom";
+// import { useNavigation } from "react-router-dom";
 
-const SubmitBtn = ({ text }) => {
-  const navigation = useNavigation();
-  const isSubmitting = navigation.state === "submitting";
+const SubmitBtn = ({ text , isDisabled}) => {
+  // const navigation = useNavigation();
+  // const isSubmitting = navigation.state === "submitting";
 
   return (
     <Button
       type="submit"
       className="mx-auto p-3"
       style={{ maxWidth: "80px", backgroundColor: "#D277FC" }}
-      disabled={isSubmitting}
+      disabled={isDisabled}
     >
-      {isSubmitting ? (
+      {isDisabled ? (
         <>
           <span className=""></span>
           sending...

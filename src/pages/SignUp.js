@@ -61,6 +61,7 @@ const SignUp = () => {
 
     // const [selectedRole, setSelectedRole] = useState("user");
     const [cropData, setCropData] = useState("#");
+    const [isDisabled, setIsDisabled] = useState(0);
      const navigate = useNavigate();
 
     // const handleRoleChange = (e) => {
@@ -88,6 +89,7 @@ const SignUp = () => {
 
     const handleSubmit = async(e) => {
       e.preventDefault();
+      setIsDisabled(1);
       const formData = {
         fullname: e.target.fullname.value,
         email: e.target.email.value,
@@ -126,13 +128,14 @@ const SignUp = () => {
         await customFetchForFirebase.post("/profiles.json", formData);
         // console.log(response);
         alert("suceessfully created account");
+        setIsDisabled(0);
         // return null;
         navigate("/login");
       } catch (error) {
         const errorMessage = "please double check your credentials";
         alert(errorMessage);
       }
-
+      setIsDisabled(0);
     }
 
   return (
@@ -179,7 +182,7 @@ const SignUp = () => {
           {renderRoleSpecificFields()}
 
           <div className="d-grid gap-2 mt-5">
-            <SubmitBtn text="SignUp" />
+            <SubmitBtn text="SignUp" isDisabled={isDisabled}/>
           </div>
 
           <p className="mt-3">

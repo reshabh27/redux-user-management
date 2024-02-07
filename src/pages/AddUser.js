@@ -6,6 +6,7 @@ import TagInputWithAutocomplete from "../components/TagInputWithAutocomplete";
 import { useDispatch, useSelector } from "react-redux";
 import { removeTagVal } from "../features/user/userSlice";
 import Demo from "./Demo";
+import { Button } from "react-bootstrap";
 
 
 
@@ -22,7 +23,7 @@ const AddUser = () => {
     interest: [],
   });
   const [cropData, setCropData] = useState("#");
-
+  const [isDisabled, setIsDisabled] = useState(0);
 
   const [validationErrors, setValidationErrors] = useState({
     fullname: "",
@@ -113,6 +114,8 @@ const AddUser = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    setIsDisabled(1);
+
      const isValid = validateForm();
     if (isValid)
     {
@@ -149,10 +152,11 @@ const AddUser = () => {
     {
       alert("Form validation failed. Please check the errors.");
     }
+    setIsDisabled(0);
   };
 
   return (
-    <div className="container mt-4">
+    <div className="container mt-4 mb-5">
       <div className="place-items-center m-4 pb-4">
         <Demo cropData={cropData} setCropData={setCropData} />
       </div>
@@ -244,9 +248,16 @@ const AddUser = () => {
 
         <TagInputWithAutocomplete />
 
-        <button type="submit" className="btn btn-primary">
-          Submit
-        </button>
+        <Button type="submit" className="btn btn-primary" disabled={isDisabled}>
+          {isDisabled ? (
+            <>
+              <span className=""></span>
+              sending...
+            </>
+          ) : (
+           "Submit"
+          )}
+        </Button>
       </form>
     </div>
   );

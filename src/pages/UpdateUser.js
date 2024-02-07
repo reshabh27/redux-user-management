@@ -6,6 +6,7 @@ import TagInputWithAutocomplete from '../components/TagInputWithAutocomplete';
 import { useDispatch, useSelector } from 'react-redux';
 import { removeTagVal} from '../features/user/userSlice';
 import Demo from './Demo';
+import { Button } from 'react-bootstrap';
 
 export const loader = async ({params}) => {
   const response = await customFetchForFirebase.get(`/profiles/${params.id}.json`);
@@ -13,7 +14,7 @@ export const loader = async ({params}) => {
     ...response.data,
     id: params.id,
   };
-  console.log(userToUpdate);
+  // console.log(userToUpdate);
   return  userToUpdate ;
 };
 
@@ -23,6 +24,7 @@ export const UpdateUser = () => {
     // console.log(fetchedData);
     const [formData, setFormData] = useState(fetchedData);
     const [cropData, setCropData] = useState(fetchedData?.croppedImage);
+    const [isDisabled,setIsDisabled] = useState(0);
     const tagVal = useSelector((state) => state.userState.tagVal);
     const dispatch = useDispatch();
 
@@ -48,8 +50,9 @@ export const UpdateUser = () => {
   };
 
   const handleUpdate = async (e) => {
+    e.preventDefault();
+    setIsDisabled(1);
     try {
-      e.preventDefault();
 
       setFormData((prevData) => ({
         ...prevData,
@@ -74,6 +77,7 @@ export const UpdateUser = () => {
     } catch (error) {
       alert("Error submitting the form:");
     }
+    setIsDisabled(0);
   };
 
   return (
@@ -146,9 +150,16 @@ export const UpdateUser = () => {
 
         <TagInputWithAutocomplete initialTags={formData.interest} />
 
-        <button type="submit" className="btn btn-primary">
-          Update User
-        </button>
+        <Button type="submit" className="btn btn-primary" disabled={isDisabled}>
+          {isDisabled ? (
+            <>
+              <span className=""></span>
+              updating...
+            </>
+          ) : (
+            "Update User"
+          )}
+        </Button>
       </form>
     </div>
   );

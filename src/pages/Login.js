@@ -15,6 +15,7 @@ export const Login = () => {
       email: "",
       password: "",
     });
+    const [isDisabled,setIsDisabled] = useState(0);
 
     const [validationErrors, setValidationErrors] = useState({
       email: "",
@@ -59,7 +60,7 @@ export const Login = () => {
 
     const handleLogin = async (e) => {
       e.preventDefault();
-
+      setIsDisabled(1);
       const isValid = validateForm();
 
       if (isValid)
@@ -77,27 +78,12 @@ export const Login = () => {
           const matchedUser = transformedArray.find((user) => user.email === formData.email && user.password === formData.password);
           if (matchedUser) {
             dispatch(loginUser(matchedUser));
+            setIsDisabled(0);
             navigate("/");
             console.log("Login successful!");
           } else {
             alert("Wrong email or password");
           }
-          // if (transformedArray.length) {
-          //   const user = usersData.data[0];
-          //   // Check if the entered password matches the user's password
-          //   if (formData.password === user.password) {
-          //     // Passwords match, dispatch the LOGIN_USER action
-          //     dispatch(loginUser(user));
-          //     navigate("/");
-          //   } else {
-          //     // Passwords don't match, show an alert
-          //     alert("Wrong password");
-          //   }
-          // } else {
-          //   const errorMessage = "This email is not registered";
-          //   alert(errorMessage);
-          //   return null;
-          // }
         } catch (error) {
           console.error("Login error:", error);
           alert("An error occurred during login.");
@@ -107,13 +93,15 @@ export const Login = () => {
       {
         alert("Form validation failed. Please check the errors.");
       }
+      setIsDisabled(0);
     };
 
 
   return (
     <div
       style={{
-        backgroundImage: "linear-gradient(to right, #7bd0f9, #68c3ff, #78b1ff, #a299ff, #d277fc)",
+        backgroundImage:
+          "linear-gradient(to right, #7bd0f9, #68c3ff, #78b1ff, #a299ff, #d277fc)",
         minHeight: "100vh",
       }}
       className="p-5"
@@ -129,11 +117,23 @@ export const Login = () => {
           <br />
           <br />
           <br />
-          <FormInput type="email" label="Email" name="email" onChange={handleInputChange} errorMessage={validationErrors.email}/>
-          <FormInput type="password" label="Password" name="password" onChange={handleInputChange} errorMessage={validationErrors.password}/>
+          <FormInput
+            type="email"
+            label="Email"
+            name="email"
+            onChange={handleInputChange}
+            errorMessage={validationErrors.email}
+          />
+          <FormInput
+            type="password"
+            label="Password"
+            name="password"
+            onChange={handleInputChange}
+            errorMessage={validationErrors.password}
+          />
           <br />
           <div>
-            <SubmitBtn text="Login" />
+            <SubmitBtn text="Login" isDisabled={isDisabled} />
           </div>
           <br /> <br />
           <p className="pb-5">
